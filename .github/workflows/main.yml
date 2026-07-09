@@ -12,37 +12,14 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git zip unzip build-essential python3-pip python3-dev autoconf libtool pkg-config zlib1g-dev libncursesw5-dev libssl-dev libffi-dev libsqlite3-dev
+          sudo apt-get install -y git zip unzip build-essential python3-pip python3-dev autoconf libtool pkg-config zlib1g-dev libncursesw5-dev libssl-dev libffi-dev libsqlite3-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libfreetype6-dev libgl1-mesa-dev libgles2-mesa-dev libpng-dev libjpeg-dev
 
       - name: Install Buildozer and Cython
         run: |
           pip3 install --user --upgrade buildozer cython
 
-      - name: Generate buildozer.spec
-        run: |
-          # Xóa bản cũ nếu có
-          rm -f buildozer.spec
-          # Tạo file mới với cấu hình bắt buộc
-          cat <<EOF > buildozer.spec
-          [app]
-          title = My Application
-          package.name = myapp
-          package.domain = org.test
-          source.dir = .
-          source.include_exts = py,png,jpg,kv,atlas
-          version = 0.1
-          requirements = python3,kivy
-          android.archs = arm64-v8a
-          EOF
-
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Chạy build và chấp nhận mọi license
-          yes | buildozer android debug
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: package
-          path: bin/*.apk
+          # Lệnh build chuyên dụng để tránh lỗi Broken Pipe
+          buildozer android debug
