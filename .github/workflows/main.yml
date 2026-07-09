@@ -18,12 +18,15 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer cython
 
-      - name: Initialize Buildozer (Force Fix)
+      - name: Create Fresh Buildozer Spec
         run: |
           export PATH=$PATH:~/.local/bin/
-          if [ ! -f "buildozer.spec" ]; then
-            buildozer init
-          fi
+          # Xóa file cũ nếu có để tránh lỗi cấu hình
+          rm -f buildozer.spec
+          # Tạo file mới
+          buildozer init
+          # Ép cấu hình chuẩn vào file mới tạo
+          sed -i 's|source.dir = .|source.dir = .|g' buildozer.spec
           sed -i 's|# source.dir = .|source.dir = .|g' buildozer.spec
 
       - name: Build with Buildozer
