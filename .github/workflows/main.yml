@@ -18,21 +18,13 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer cython
 
-      - name: Create Fresh Buildozer Spec
-        run: |
-          export PATH=$PATH:~/.local/bin/
-          # Xóa file cũ nếu có để tránh lỗi cấu hình
-          rm -f buildozer.spec
-          # Tạo file mới
-          buildozer init
-          # Ép cấu hình chuẩn vào file mới tạo
-          sed -i 's|source.dir = .|source.dir = .|g' buildozer.spec
-          sed -i 's|# source.dir = .|source.dir = .|g' buildozer.spec
-
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin/
-          buildozer android debug
+          # Đảm bảo có spec file
+          if [ ! -f "buildozer.spec" ]; then buildozer init; fi
+          # Tự động chấp nhận tất cả các yêu cầu license của Android SDK
+          yes | buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
