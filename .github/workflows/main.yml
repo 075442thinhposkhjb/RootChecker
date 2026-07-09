@@ -6,29 +6,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install System Dependencies
+      - name: Install Dependencies
         run: |
           sudo apt-get update
+          # Cấp quyền sudo để cài đặt các thư viện hệ thống tầng thấp
           sudo apt-get install -y git zip unzip build-essential autoconf libtool pkg-config zlib1g-dev libncursesw5-dev libssl-dev libffi-dev libsqlite3-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libfreetype6-dev libgl1-mesa-dev libgles2-mesa-dev libpng-dev libjpeg-dev
 
-      - name: Install Buildozer and Cython
+      - name: Install Buildozer
         run: |
-          pip3 install --user --upgrade buildozer cython
+          # Dùng sudo để cài buildozer vào thư mục hệ thống
+          sudo pip3 install --upgrade buildozer cython
 
-      - name: Pre-configure Buildozer
+      - name: Build APK with Superuser Rights
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Chạy lệnh này để nó tải SDK trước một cách lặng lẽ
-          buildozer android update || true
+          # Lệnh yes | sudo dùng để thực thi build với quyền cao nhất
+          # Thêm biến môi trường để ép không hỏi xác nhận
+          yes | sudo buildozer -v android debug
 
-      - name: Build APK
+      - name: Fix Permissions and Upload
         run: |
-          export PATH=$PATH:~/.local/bin/
-          # Chạy build với tham số --no-optimize để giảm tải cho CPU/RAM
-          yes | buildozer -v android debug
+          # Cấp quyền đọc cho file APK trước khi upload
+          sudo chmod 777 bin/*.apk
+          ls -l bin/
+        if: always()
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
