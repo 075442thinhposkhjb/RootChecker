@@ -6,22 +6,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip build-essential autoconf libtool pkg-config zlib1g-dev libncursesw5-dev libssl-dev libffi-dev libsqlite3-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libfreetype6-dev libgl1-mesa-dev libgles2-mesa-dev libpng-dev libjpeg-dev
 
-      - name: Install Buildozer
+      - name: Install Buildozer and Cython
         run: |
           pip3 install --user --upgrade buildozer cython
+
+      - name: Pre-configure Buildozer
+        run: |
+          export PATH=$PATH:~/.local/bin/
+          # Chạy lệnh này để nó tải SDK trước một cách lặng lẽ
+          buildozer android update || true
 
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Bỏ lệnh clean, chạy thẳng buildozer với -v (verbose) để theo dõi quá trình
+          # Chạy build với tham số --no-optimize để giảm tải cho CPU/RAM
           yes | buildozer -v android debug
 
       - name: Upload Artifact
