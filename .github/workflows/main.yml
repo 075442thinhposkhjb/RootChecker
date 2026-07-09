@@ -18,6 +18,14 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer cython
 
+      - name: Initialize Buildozer (Force Fix)
+        run: |
+          export PATH=$PATH:~/.local/bin/
+          if [ ! -f "buildozer.spec" ]; then
+            buildozer init
+          fi
+          sed -i 's|# source.dir = .|source.dir = .|g' buildozer.spec
+
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin/
@@ -28,4 +36,3 @@ jobs:
         with:
           name: package
           path: bin/*.apk
-          
