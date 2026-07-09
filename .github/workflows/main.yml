@@ -18,12 +18,27 @@ jobs:
         run: |
           pip3 install --user --upgrade buildozer cython
 
+      - name: Force Create Buildozer Config
+        run: |
+          export PATH=$PATH:~/.local/bin/
+          # Tạo file config chuẩn trực tiếp bằng câu lệnh này
+          cat <<EOF > buildozer.spec
+          [app]
+          title = My App
+          package.name = myapp
+          package.domain = org.test
+          source.dir = .
+          source.include_exts = py,png,jpg,kv,atlas
+          version = 0.1
+          requirements = python3,kivy
+          orientation = portrait
+          fullscreen = 0
+          android.archs = arm64-v8a
+          EOF
+
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Đảm bảo có spec file
-          if [ ! -f "buildozer.spec" ]; then buildozer init; fi
-          # Tự động chấp nhận tất cả các yêu cầu license của Android SDK
           yes | buildozer android debug
 
       - name: Upload artifacts
