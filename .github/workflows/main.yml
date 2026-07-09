@@ -21,9 +21,7 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Dùng debug mode (log_level 2) để bắt lỗi chính xác
-          # Bỏ qua bước tạo file spec rườm rà, để buildozer tự lo
-          buildozer -v android debug log_level=2
+          yes | buildozer android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
