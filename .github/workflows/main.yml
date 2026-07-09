@@ -21,11 +21,8 @@ jobs:
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin/
-          # Dọn dẹp môi trường trước khi bắt đầu
-          buildozer clean
-          # Sử dụng lệnh yes để tự động đồng ý mọi điều khoản
-          # Thêm biến môi trường để ép log không bị tràn (giảm tải cho hệ thống)
-          yes | buildozer android debug
+          # Bỏ lệnh clean, chạy thẳng buildozer với -v (verbose) để theo dõi quá trình
+          yes | buildozer -v android debug
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
