@@ -6,4 +6,5 @@ source.include_exts = py
 version = 1.0
 requirements = python3
 orientation = portrait
-
+source.dir = .
+source.main = main.py
